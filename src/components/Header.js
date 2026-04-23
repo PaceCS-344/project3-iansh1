@@ -1,7 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
 import { navButtonClass } from "../navButtonClass";
+import Button from "./Button";
 
-export default function Header() {
+export default function Header({ theme, onToggleTheme, themeFeedback }) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -32,7 +33,13 @@ export default function Header() {
           <NavLink to="/contact" className={navButtonClass}>
             Contact
           </NavLink>
+          <Button onClick={onToggleTheme} aria-label="Toggle color theme">
+            {theme === "dark" ? "Light mode" : "Dark mode"}
+          </Button>
         </nav>
+        <p className="theme-feedback" aria-live="polite">
+          {themeFeedback}
+        </p>
       </div>
     </header>
   );
