@@ -6,8 +6,7 @@ export default function Home() {
     <section className="section home-intro">
       <h2>Portfolio overview</h2>
       <p>
-        Use the top navigation or jump into any section below. Each section is
-        split into its own route so content stays modular and easy to maintain.
+        Use the top navigation or jump into any section below.
       </p>
       <div className="home-grid">
         {HOME_SECTIONS.map((section) => (
