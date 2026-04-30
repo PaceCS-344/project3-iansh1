@@ -1,4 +1,9 @@
 import { useMemo, useState } from "react";
+import { CONTACT } from "../content/contact";
+import { useGithubRepoSearch } from "../hooks/useGithubRepoSearch";
+import { useGithubRepos } from "../hooks/useGithubRepos";
+import { useSectionSearch } from "../hooks/useSectionSearch";
+import Button from "./Button";
 
 const PROJECTS = [
   {
@@ -30,9 +35,40 @@ const PROJECTS = [
   },
 ];
 
+function flattenProjectText(project) {
+  return [
+    project.title,
+    project.period,
+    project.stack,
+    project.summary,
+    ...project.bullets,
+    ...project.tags,
+  ].join(" ");
+}
+
 export default function Projects() {
-  const [query, setQuery] = useState("");
+  const { githubUsername } = CONTACT;
+  const { repos, loading, error } = useGithubRepos(githubUsername, 6);
+  const [repoSearchTerm, setRepoSearchTerm] = useState("");
+  const [repoLanguage, setRepoLanguage] = useState("");
+  const {
+    repos: searchedRepos,
+    loading: searchLoading,
+    error: searchError,
+  } = useGithubRepoSearch(githubUsername, repoSearchTerm, repoLanguage, 10);
+  const [projectFilter, setProjectFilter] = useState("");
   const [activeTag, setActiveTag] = useState("All");
+
+  const sectionSearchText = useMemo(() => {
+    const featured = PROJECTS.map(flattenProjectText).join(" ");
+    const fromGithub = repos
+      .map((r) => [r.name, r.description, r.language].filter(Boolean).join(" "))
+      .join(" ");
+    return `${featured} ${fromGithub} GitHub repositories`;
+  }, [repos]);
+
+  const { ref: sectionRef, isMatch: sectionMatch } =
+    useSectionSearch(sectionSearchText);
 
   const allTags = useMemo(() => {
     const tagSet = new Set(["All"]);
@@ -43,7 +79,7 @@ export default function Projects() {
   }, []);
 
   const filteredProjects = useMemo(() => {
-    const term = query.trim().toLowerCase();
+    const term = projectFilter.trim().toLowerCase();
     return PROJECTS.filter((project) => {
       const matchesText =
         term.length === 0 ||
@@ -55,23 +91,34 @@ export default function Projects() {
         activeTag === "All" || project.tags.includes(activeTag);
       return matchesText && matchesTag;
     });
-  }, [activeTag, query]);
+  }, [activeTag, projectFilter]);
+
+  const usingGithubSearch =
+    repoSearchTerm.trim().length > 0 || repoLanguage.trim().length > 0;
+  const githubList = usingGithubSearch ? searchedRepos : repos;
 
   return (
-    <section id="projects" className="section">
+    <section
+      id="projects"
+      ref={sectionRef}
+      tabIndex={-1}
+      className={`section${sectionMatch ? " search-match" : ""}`}
+    >
       <h2>Projects and experience</h2>
-      <p>
-        Selected work from my internship and personal projects.
-      </p>
+      <p>Selected work from my internship and personal projects.</p>
+
       <div className="project-tools">
-        <label htmlFor="project-search">Search projects</label>
+        <label htmlFor="project-search">Filter featured projects</label>
         <input
           id="project-search"
           type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search by tech or keywords"
+          value={projectFilter}
+          onChange={(event) => setProjectFilter(event.target.value)}
+          placeholder="Match title, stack, or keywords"
         />
+        <p className="small project-tools-hint">
+          Tags apply only to featured project cards.
+        </p>
         <div className="tag-row" role="group" aria-label="Project tags">
           {allTags.map((tag) => (
             <button
@@ -85,6 +132,7 @@ export default function Projects() {
           ))}
         </div>
       </div>
+
       <ul className="project-cards">
         {filteredProjects.map((p) => (
           <li key={p.title} className="project-card">
@@ -104,10 +152,91 @@ export default function Projects() {
       </ul>
       {filteredProjects.length === 0 ? (
         <p className="small">
-          No projects match that search yet. Try another keyword or reset to
+          No featured projects match that filter. Try another keyword or choose
           All tags.
         </p>
       ) : null}
+
+      <h3 className="subheading github-repos-heading">GitHub repositories</h3>
+      <p className="small">
+        Pulled live with the{" "}
+        <a
+          href="https://docs.github.com/en/rest/repos/repos#list-repositories-for-a-user"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Repos API
+        </a>{" "}
+        and{" "}
+        <a
+          href="https://docs.github.com/en/rest/search/search"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Search API
+        </a>
+        .
+      </p>
+      <div className="project-tools repo-search-tools">
+        <label htmlFor="repo-search-name">Search GitHub repos (name or description)</label>
+        <input
+          id="repo-search-name"
+          type="search"
+          value={repoSearchTerm}
+          onChange={(event) => setRepoSearchTerm(event.target.value)}
+          placeholder="e.g., parser, react, analytics"
+        />
+        <label htmlFor="repo-search-language" className="repo-language-label">
+          Filter by language
+        </label>
+        <input
+          id="repo-search-language"
+          type="text"
+          value={repoLanguage}
+          onChange={(event) => setRepoLanguage(event.target.value)}
+          placeholder="e.g., Python, JavaScript"
+        />
+      </div>
+
+      {!usingGithubSearch && loading ? (
+        <p className="small">Loading repositories...</p>
+      ) : null}
+      {!usingGithubSearch && error ? (
+        <p className="small" role="alert">
+          Could not load GitHub repos: {error}
+        </p>
+      ) : null}
+      {usingGithubSearch && searchLoading ? (
+        <p className="small">Searching repositories...</p>
+      ) : null}
+      {usingGithubSearch && searchError ? (
+        <p className="small" role="alert">
+          Could not search repositories: {searchError}
+        </p>
+      ) : null}
+
+      {!loading && !error && !searchLoading && !searchError && githubList.length === 0 ? (
+        <p className="small">
+          {usingGithubSearch
+            ? "No repositories match that search."
+            : "No recent repositories found."}
+        </p>
+      ) : null}
+
+      <ul className="project-cards github-repo-list">
+        {githubList.map((repo) => (
+          <li key={repo.id} className="project-card github-repo-card">
+            <h4 className="github-repo-name">{repo.name}</h4>
+            <p className="meta">
+              {repo.language ? `Language: ${repo.language}` : "Language: —"}
+            </p>
+            <p>{repo.description ?? "No description provided."}</p>
+            <Button href={repo.htmlUrl} target="_blank" rel="noopener noreferrer">
+              View on GitHub
+            </Button>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

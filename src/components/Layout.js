@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { SearchProvider } from "../context/SearchContext";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -30,7 +31,7 @@ export default function Layout() {
   }, [themeFeedback]);
 
   return (
-    <>
+    <SearchProvider>
       <Header
         theme={theme}
         onToggleTheme={toggleTheme}
@@ -40,6 +41,6 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
-    </>
+    </SearchProvider>
   );
 }

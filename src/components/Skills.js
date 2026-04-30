@@ -1,3 +1,5 @@
+import { useSectionSearch } from "../hooks/useSectionSearch";
+
 const GROUPS = [
   {
     title: "Languages",
@@ -20,9 +22,22 @@ const GROUPS = [
   },
 ];
 
+const SKILLS_SEARCH_TEXT = [
+  "Skills",
+  "Coursework",
+  ...GROUPS.map((g) => `${g.title} ${g.items}`),
+].join(" ");
+
 export default function Skills() {
+  const { ref, isMatch } = useSectionSearch(SKILLS_SEARCH_TEXT);
+
   return (
-    <section id="skills" className="section">
+    <section
+      id="skills"
+      ref={ref}
+      tabIndex={-1}
+      className={`section${isMatch ? " search-match" : ""}`}
+    >
       <h2>Skills</h2>
       <p>
         Coursework includes intro CS (Python), OOP (Java), data structures and

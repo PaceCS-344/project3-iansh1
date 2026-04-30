@@ -1,11 +1,28 @@
 import Button from "./Button";
 import { CONTACT } from "../content/contact";
+import { useSectionSearch } from "../hooks/useSectionSearch";
+
+const CONTACT_SEARCH_TEXT = [
+  "Contact",
+  "Email",
+  "LinkedIn",
+  "GitHub",
+  CONTACT.email,
+  "Edgewood",
+  "Maryland",
+].join(" ");
 
 export default function Contact() {
   const { email, linkedin, github } = CONTACT;
+  const { ref, isMatch } = useSectionSearch(CONTACT_SEARCH_TEXT);
 
   return (
-    <section id="contact" className="section">
+    <section
+      id="contact"
+      ref={ref}
+      tabIndex={-1}
+      className={`section${isMatch ? " search-match" : ""}`}
+    >
       <h2>Contact</h2>
       <p>Reach me by email or connect on LinkedIn and GitHub.</p>
       <div className="contact-actions">

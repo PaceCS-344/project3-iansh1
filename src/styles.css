@@ -277,6 +277,92 @@ code {
   font-size: 0.9em;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.header-search {
+  margin-top: 0.65rem;
+}
+
+.header-search-input {
+  width: 100%;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  border-radius: 2px;
+}
+
+.header-search-input:focus-visible {
+  outline: 2px solid var(--line-strong);
+  outline-offset: 2px;
+}
+
+.search-match {
+  outline: 2px solid var(--line-strong);
+  outline-offset: 4px;
+  border-radius: 2px;
+  scroll-margin-top: 6.5rem;
+}
+
+.github-repos-heading {
+  margin-top: 1.5rem;
+}
+
+.github-repo-name {
+  font-size: 1rem;
+  margin: 0 0 0.35rem;
+}
+
+.github-repo-card .btn {
+  margin-top: 0.5rem;
+}
+
+.project-tools-hint {
+  margin: 0.35rem 0 0;
+}
+
+.repo-search-tools {
+  margin-top: 1rem;
+}
+
+.repo-search-tools input + label {
+  margin-top: 0.5rem;
+}
+
+.github-about-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: start;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.github-avatar {
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.github-stats-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn,
   .home-card,

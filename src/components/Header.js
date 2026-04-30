@@ -1,8 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import { navButtonClass } from "../navButtonClass";
+import { useSearch } from "../context/SearchContext";
 import Button from "./Button";
 
 export default function Header({ theme, onToggleTheme, themeFeedback }) {
+  const { query, setQuery } = useSearch();
+
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -40,6 +43,21 @@ export default function Header({ theme, onToggleTheme, themeFeedback }) {
         <p className="theme-feedback" aria-live="polite">
           {themeFeedback}
         </p>
+        <div className="header-search">
+          <label className="sr-only" htmlFor="portfolio-search">
+            Search portfolio
+          </label>
+          <input
+            id="portfolio-search"
+            className="header-search-input"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search portfolio…"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
       </div>
     </header>
   );
