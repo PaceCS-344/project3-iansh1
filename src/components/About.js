@@ -1,3 +1,4 @@
+import HighlightMatches from "./HighlightMatches";
 import { CONTACT } from "../content/contact";
 import { useGithubUser } from "../hooks/useGithubUser";
 import { useSectionSearch } from "../hooks/useSectionSearch";
@@ -33,32 +34,33 @@ export default function About() {
   ]
     .filter(Boolean)
     .join(" ");
-  const { ref, isMatch } = useSectionSearch(`${ABOUT_SEARCH_TEXT} ${dynamicSearch}`);
+  const { ref } = useSectionSearch(`${ABOUT_SEARCH_TEXT} ${dynamicSearch}`);
 
   return (
     <section
       id="about"
       ref={ref}
       tabIndex={-1}
-      className={`section${isMatch ? " search-match" : ""}`}
+      className="section search-scroll-root"
     >
-      <h2>About me</h2>
+      <h2>
+        <HighlightMatches text="About me" />
+      </h2>
       <p>
-        I am pursuing a B.S. in Computer Science with a minor in Mathematics at
-        Pace University (Seidenberg School of CSIS), graduating May 2027. I
-        care about building tools that make technical work easier for users.
+        <HighlightMatches text="I am pursuing a B.S. in Computer Science with a minor in Mathematics at Pace University (Seidenberg School of CSIS), graduating May 2027. I care about building tools that make technical work easier for users." />
       </p>
 
-      <h3 className="subheading">Highlights I am proud of</h3>
+      <h3 className="subheading">
+        <HighlightMatches text="Highlights I am proud of" />
+      </h3>
       <ul>
         <li>
-          <strong>Sensor data pipeline:</strong> multi-station time-series
-          processing with validation, TimescaleDB hypertables, and adapters for
-          multiple database backends.
+          <strong>Sensor data pipeline:</strong>{" "}
+          <HighlightMatches text="multi-station time-series processing with validation, TimescaleDB hypertables, and adapters for multiple database backends." />
         </li>
         <li>
-          <strong>UN Millennium Fellowship:</strong> participated in the
-          Right-to-Know H₂O &apos;24 project (Fall 2024).
+          <strong>UN Millennium Fellowship:</strong>{" "}
+          <HighlightMatches text="participated in the Right-to-Know H₂O '24 project (Fall 2024)." />
         </li>
       </ul>
 
@@ -81,25 +83,33 @@ export default function About() {
           />
           <div>
             <p className="meta">
-              @{user.login}
+              @<HighlightMatches text={user.login} />
               {" · "}
               <a href={user.htmlUrl} target="_blank" rel="noopener noreferrer">
                 View profile
               </a>
             </p>
-            {user.bio ? <p>{user.bio}</p> : null}
+            {user.bio ? (
+              <p>
+                <HighlightMatches text={user.bio} />
+              </p>
+            ) : null}
             <ul className="github-stats-list">
               <li>
-                <strong>Followers:</strong> {user.followers}
+                <strong>Followers:</strong>{" "}
+                <HighlightMatches text={String(user.followers)} />
               </li>
               <li>
-                <strong>Following:</strong> {user.following}
+                <strong>Following:</strong>{" "}
+                <HighlightMatches text={String(user.following)} />
               </li>
               <li>
-                <strong>Public repos:</strong> {user.publicRepos}
+                <strong>Public repos:</strong>{" "}
+                <HighlightMatches text={String(user.publicRepos)} />
               </li>
               <li>
-                <strong>Public gists:</strong> {user.publicGists}
+                <strong>Public gists:</strong>{" "}
+                <HighlightMatches text={String(user.publicGists)} />
               </li>
             </ul>
           </div>

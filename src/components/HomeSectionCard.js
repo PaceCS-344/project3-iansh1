@@ -1,12 +1,17 @@
 import { NavLink } from "react-router-dom";
+import HighlightMatches from "./HighlightMatches";
 
 export default function HomeSectionCard({ title, description, to, cta }) {
   return (
     <article className="home-card">
-      <h3>{title}</h3>
-      <p>{description}</p>
+      <h3>
+        <HighlightMatches text={title} />
+      </h3>
+      <p>
+        <HighlightMatches text={description} />
+      </p>
       <NavLink to={to} className="btn">
-        {cta}
+        <HighlightMatches text={cta} />
       </NavLink>
     </article>
   );

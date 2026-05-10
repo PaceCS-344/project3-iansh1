@@ -4,6 +4,7 @@ import { useGithubRepoSearch } from "../hooks/useGithubRepoSearch";
 import { useGithubRepos } from "../hooks/useGithubRepos";
 import { useSectionSearch } from "../hooks/useSectionSearch";
 import Button from "./Button";
+import HighlightMatches from "./HighlightMatches";
 
 const PROJECTS = [
   {
@@ -59,16 +60,19 @@ export default function Projects() {
   const [projectFilter, setProjectFilter] = useState("");
   const [activeTag, setActiveTag] = useState("All");
 
+  const usingGithubSearch =
+    repoSearchTerm.trim().length > 0 || repoLanguage.trim().length > 0;
+  const githubList = usingGithubSearch ? searchedRepos : repos;
+
   const sectionSearchText = useMemo(() => {
     const featured = PROJECTS.map(flattenProjectText).join(" ");
-    const fromGithub = repos
+    const fromGithub = githubList
       .map((r) => [r.name, r.description, r.language].filter(Boolean).join(" "))
       .join(" ");
     return `${featured} ${fromGithub} GitHub repositories`;
-  }, [repos]);
+  }, [githubList]);
 
-  const { ref: sectionRef, isMatch: sectionMatch } =
-    useSectionSearch(sectionSearchText);
+  const { ref: sectionRef } = useSectionSearch(sectionSearchText);
 
   const allTags = useMemo(() => {
     const tagSet = new Set(["All"]);
@@ -93,19 +97,19 @@ export default function Projects() {
     });
   }, [activeTag, projectFilter]);
 
-  const usingGithubSearch =
-    repoSearchTerm.trim().length > 0 || repoLanguage.trim().length > 0;
-  const githubList = usingGithubSearch ? searchedRepos : repos;
-
   return (
     <section
       id="projects"
       ref={sectionRef}
       tabIndex={-1}
-      className={`section${sectionMatch ? " search-match" : ""}`}
+      className="section search-scroll-root"
     >
-      <h2>Projects and experience</h2>
-      <p>Selected work from my internship and personal projects.</p>
+      <h2>
+        <HighlightMatches text="Projects and experience" />
+      </h2>
+      <p>
+        <HighlightMatches text="Selected work from my internship and personal projects." />
+      </p>
 
       <div className="project-tools">
         <label htmlFor="project-search">Filter featured projects</label>
@@ -117,7 +121,7 @@ export default function Projects() {
           placeholder="Match title, stack, or keywords"
         />
         <p className="small project-tools-hint">
-          Tags apply only to featured project cards.
+          <HighlightMatches text="Tags apply only to featured project cards." />
         </p>
         <div className="tag-row" role="group" aria-label="Project tags">
           {allTags.map((tag) => (
@@ -157,7 +161,9 @@ export default function Projects() {
         </p>
       ) : null}
 
-      <h3 className="subheading github-repos-heading">GitHub repositories</h3>
+      <h3 className="subheading github-repos-heading">
+        <HighlightMatches text="GitHub repositories" />
+      </h3>
       <p className="small">
         Pulled live with the{" "}
         <a
@@ -226,11 +232,23 @@ export default function Projects() {
       <ul className="project-cards github-repo-list">
         {githubList.map((repo) => (
           <li key={repo.id} className="project-card github-repo-card">
-            <h4 className="github-repo-name">{repo.name}</h4>
+            <h4 className="github-repo-name">
+              <HighlightMatches text={repo.name} />
+            </h4>
             <p className="meta">
-              {repo.language ? `Language: ${repo.language}` : "Language: —"}
+              <HighlightMatches
+                text={
+                  repo.language ? `Language: ${repo.language}` : "Language: —"
+                }
+              />
             </p>
-            <p>{repo.description ?? "No description provided."}</p>
+            <p>
+              {repo.description != null ? (
+                <HighlightMatches text={repo.description} />
+              ) : (
+                <HighlightMatches text="No description provided." />
+              )}
+            </p>
             <Button href={repo.htmlUrl} target="_blank" rel="noopener noreferrer">
               View on GitHub
             </Button>

@@ -310,11 +310,16 @@ code {
   outline-offset: 2px;
 }
 
-.search-match {
-  outline: 2px solid var(--line-strong);
-  outline-offset: 4px;
-  border-radius: 2px;
+/* Scroll target for global header search (no full-section outline). */
+.search-scroll-root {
   scroll-margin-top: 6.5rem;
+}
+
+.search-mark {
+  background: color-mix(in srgb, var(--line-strong) 18%, var(--surface-soft));
+  color: inherit;
+  padding: 0 0.05em;
+  border-radius: 2px;
 }
 
 .github-repos-heading {

@@ -1,3 +1,4 @@
+import HighlightMatches from "./HighlightMatches";
 import { useSectionSearch } from "../hooks/useSectionSearch";
 
 const GROUPS = [
@@ -28,26 +29,33 @@ const SKILLS_SEARCH_TEXT = [
   ...GROUPS.map((g) => `${g.title} ${g.items}`),
 ].join(" ");
 
+const COURSEWORK =
+  "Coursework includes intro CS (Python), OOP (Java), data structures and algorithms, discrete math, computer organization (C), calculus, probability and statistics, and differential equations.";
+
 export default function Skills() {
-  const { ref, isMatch } = useSectionSearch(SKILLS_SEARCH_TEXT);
+  const { ref } = useSectionSearch(SKILLS_SEARCH_TEXT);
 
   return (
     <section
       id="skills"
       ref={ref}
       tabIndex={-1}
-      className={`section${isMatch ? " search-match" : ""}`}
+      className="section search-scroll-root"
     >
-      <h2>Skills</h2>
+      <h2>
+        <HighlightMatches text="Skills" />
+      </h2>
       <p>
-        Coursework includes intro CS (Python), OOP (Java), data structures and
-        algorithms, discrete math, computer organization (C), calculus,
-        probability and statistics, and differential equations.
+        <HighlightMatches text={COURSEWORK} />
       </p>
       <ul className="skills-list">
         {GROUPS.map(({ title, items }) => (
           <li key={title}>
-            <strong>{title}:</strong> {items}
+            <strong>
+              <HighlightMatches text={title} />
+              :
+            </strong>{" "}
+            <HighlightMatches text={items} />
           </li>
         ))}
       </ul>

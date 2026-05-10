@@ -1,17 +1,16 @@
 import { useEffect, useRef } from "react";
 import { useSearch } from "../context/SearchContext";
 
-
+/**
+ * Scrolls/focuses the section when the debounced portfolio search matches its text.
+ * Visual match feedback is handled with <HighlightMatches>, not a full-section outline.
+ */
 export function useSectionSearch(searchableText) {
-  const { query, debouncedQuery } = useSearch();
+  const { debouncedQuery } = useSearch();
   const ref = useRef(null);
 
-  const q = query.trim().toLowerCase();
-  const dq = debouncedQuery.toLowerCase();
-
+  const dq = debouncedQuery.trim().toLowerCase();
   const haystack = (searchableText || "").toLowerCase();
-
-  const isMatch = q.length > 0 && haystack.includes(q);
 
   useEffect(() => {
     if (!dq || !haystack.includes(dq) || !ref.current) return;
@@ -19,5 +18,5 @@ export function useSectionSearch(searchableText) {
     ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [dq, haystack]);
 
-  return { ref, isMatch };
+  return { ref };
 }
